@@ -20,7 +20,9 @@ class PortalSpider(Spider):
             yield Request(self.portal['START'] % (self.date, self.cnn_attr['page'], self.date), headers={'User-Agent': CONFIG['USER_AGENT']})
         elif self.portal['NAME'] == 'Bisnis':
             date_tmp = datetime.strptime(self.date, '%Y-%m-%d')
+            locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
             date_tmp = date_tmp.strftime("%d+%B+%Y")
+            locale.setlocale(locale.LC_ALL, 'id_ID.UTF-8')
             yield Request(self.portal['START'] % date_tmp, headers={'User-Agent': CONFIG['USER_AGENT']})
         elif self.portal['NAME'] == 'VIVA':
             self.portal['FORM_DATA']['last_publish_date'] = self.date + " 23:59:59"
