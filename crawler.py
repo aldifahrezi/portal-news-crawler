@@ -102,6 +102,9 @@ class PortalSpider(Spider):
         elif self.portal['NAME'] == 'CNN':
             title = self.strip(title)
 
+        if title is not None:
+            title = title.strip()
+
         return title
 
     def parse_author(self, response):
@@ -119,6 +122,10 @@ class PortalSpider(Spider):
             author = response.xpath(self.portal['DATE']).extract()
             author = author[1].split("|")[0]
             author = self.strip(author)
+
+
+        if author is not None:
+            author = author.strip()
 
         return author
 
@@ -140,6 +147,9 @@ class PortalSpider(Spider):
         elif self.portal['NAME'] in ["Antara News", "Pikiran Rakyat"]:
             date = self.strip(date)
 
+        # Date normalizer
+        date = datetime.strptime(date, self.portal['DATE_FORMAT'])
+
         return date
 
     def parse_tag(self, response):
@@ -153,6 +163,9 @@ class PortalSpider(Spider):
             category = self.strip(category)
         elif self.portal['NAME'] == 'Berita Satu':
             category = response.request.url.split("/")[3]
+
+        if category is not None:
+            category = category.strip()
 
         return category
 
@@ -194,6 +207,9 @@ class PortalSpider(Spider):
 
             if has_stop_criteria and stop_criteria.match(content):
                 break
+
+        if contents_result is not None:
+            contents_result = contents_result.strip()
 
         return contents_result
 
