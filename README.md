@@ -68,9 +68,12 @@ Portal Name:
 
 Format File:
 
+- jsonlines
 - json
 - csv
 - xml
+- pickle
+- marshal
 
 #### Cara 2
 
