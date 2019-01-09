@@ -247,6 +247,19 @@ CONFIG = {
         'EXCLUDE_TEXT': r'.*Video.*',
         'STOP_CRITERION': r'\(\S+\)'
     },
+        'SUARAMERDEKA': {
+        'NAME': 'Suara Merdeka',
+        'START': 'https://www.suaramerdeka.com/index.php/news/indeks?d=%s',
+        'ARTICLES': '//h3[@class="title-semibold-dark size-lg mb-15"]/a/@href',
+        'NEXT_PAGES': '//ul[@class="pagination"]/li/a/@href',
+        'TITLE': '//h2[@class="title-semibold-dark size-c30"]/text()',
+        'AUTHOR': '/',
+        'DATE': '//ul[@class="post-info-dark mb-30"]/li[1]/a/text()[2]',
+        'TAG': '//ul[@class="blog-tags item-inline"]/li/a/text()',
+        'CATEGORY': '//ul[@class="post-info-dark mt-10"]/li/a/text()[2]',
+        'CONTENTS': '//div[@class="news-details-layout1"]/p/text()',
+        'STOP_CRITERION': r'\(\S+\/\S+\/\S+\)'
+    },
     'USER_AGENT': "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0",
     'ALLOWED_DOMAIN': [
         'www.tribunnews.com',
@@ -265,7 +278,8 @@ CONFIG = {
         'viva.co.id',
         'www.pikiran-rakyat.com',
         'www.thejakartapost.com',
-        'metrotvnews.com'
+        'metrotvnews.com',
+        'www.suaramerdeka.com'
     ]
 }
 

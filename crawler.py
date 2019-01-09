@@ -97,7 +97,10 @@ class PortalSpider(Spider):
             pages = response.xpath(self.portal['NEXT_PAGES']).extract()
 
         for next_page in pages:
-            yield response.follow(next_page, self.parse, headers={'User-Agent': CONFIG['USER_AGENT']})
+            if self.portal['NAME'] == 'Suara Merdeka':
+                next_page = "https://www.suaramerdeka.com/index.php/news/indeks{}".format(next_page)
+            else:
+                yield response.follow(next_page, self.parse, headers={'User-Agent': CONFIG['USER_AGENT']})
 
     def parse_title(self, response):
         title = response.xpath(self.portal['TITLE']).extract_first()
@@ -131,8 +134,13 @@ class PortalSpider(Spider):
             author = author.split('•')
             author = author[0]
             author = self.strip(author)
-
-
+        elif self.portal['NAME'] == "Suara Merdeka":
+            regex = re.compile(r'\(.+\/.+\/.+\)', re.IGNORECASE)
+            author = response.xpath('//p[@style="font-weight: bold;"]/text()').extract_first()
+            author = regex.findall(author)[0]
+            author = author.split('/')
+            author = author[0][1:]
+            
         if author is not None:
             author = author.strip()
 
@@ -176,6 +184,9 @@ class PortalSpider(Spider):
             category = self.strip(category)
         elif self.portal['NAME'] == 'Berita Satu':
             category = response.request.url.split("/")[3]
+        elif self.portal['NAME'] == 'Suara Merdeka':
+            category = category.split("\\")[2]
+            category = self.strip(category)      
 
         if category is not None:
             category = category.strip()
