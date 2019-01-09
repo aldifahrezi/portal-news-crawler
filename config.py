@@ -232,6 +232,21 @@ CONFIG = {
         'CONTENTS': '//div[@class="col-md-10 col-xs-12 detailNews"]//text()',
         'STOP_CRITERION': r'Topics :',
     },
+        'METROTVNEWS': {
+        'NAME': 'Metrotvnews',
+        'START': 'http://www.metrotvnews.com/index/%s',
+        'ARTICLES': '//ul/li/h2/a/@href',
+        'NEXT_PAGES': '/',
+        'TITLE': '//div[@class="detail"]/h1/text()',
+        'AUTHOR': '//div[@class="reg"]/text()',
+        'DATE': '//div[@class="reg"]/text()',
+        'TAG': '//div[@class="line"]/a/text()',
+        'CATEGORY': '//div[@class="breadcrumbs"]/a[2]/text()',
+        'CONTENTS': '//div[@class="page"]//text()',
+        'EXCLUDE_LINK': '//div[@class="related"]//text() || //div[@class="page"]//script/text()',
+        'EXCLUDE_TEXT': r'.*Video.*',
+        'STOP_CRITERION': r'\(\S+\)'
+    },
     'USER_AGENT': "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0",
     'ALLOWED_DOMAIN': [
         'www.tribunnews.com',
@@ -249,7 +264,8 @@ CONFIG = {
         'okezone.com',
         'viva.co.id',
         'www.pikiran-rakyat.com',
-        'www.thejakartapost.com'
+        'www.thejakartapost.com',
+        'metrotvnews.com'
     ]
 }
 

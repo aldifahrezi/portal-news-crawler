@@ -37,7 +37,7 @@ class PortalSpider(Spider):
     def __init__(self, date='', portal='DETIK', **kwargs):
         super().__init__(**kwargs)
         self.portal = CONFIG[portal.upper()]
-        if self.portal['NAME'] in ['Tempo', 'CNN', 'Republika', 'Liputan6', 'Okezone']:
+        if self.portal['NAME'] in ['Tempo', 'CNN', 'Republika', 'Liputan6', 'Okezone', 'Metrotvnews']:
             date = date.replace('-', '/')
         elif self.portal['NAME'] == 'Berita Satu':
             tmp = date.split("-")
@@ -127,6 +127,10 @@ class PortalSpider(Spider):
             author = response.xpath(self.portal['DATE']).extract()
             author = author[1].split("|")[0]
             author = self.strip(author)
+        elif self.portal['NAME'] == "Metrotvnews":
+            author = author.split('•')
+            author = author[0]
+            author = self.strip(author)
 
 
         if author is not None:
@@ -150,6 +154,10 @@ class PortalSpider(Spider):
             date = date.replace("Pada: ", "")
             date = self.strip(date)
         elif self.portal['NAME'] in ["Antara News", "Pikiran Rakyat"]:
+            date = self.strip(date)
+        elif self.portal['NAME'] == "Metrotvnews":
+            date = date.split('•')
+            date = date[1]
             date = self.strip(date)
 
         # Date normalizer
@@ -228,7 +236,7 @@ class PortalSpider(Spider):
                 return
             elif self.filter_by_date(response, 0) == 2:
                 return
-                
+
         try:
             title = self.parse_title(response)
             date = self.parse_date(response)
