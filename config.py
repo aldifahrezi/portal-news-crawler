@@ -219,6 +219,19 @@ CONFIG = {
         'CATEGORY': '//a[@class="btn active btn-secondary btn-sm"]/text()',
         'CONTENTS': '//div[@id="content-article"]//text()',
     },
+        'JAKARTAPOST': {
+        'NAME': 'Jakarta Post',
+        'START': 'https://www.thejakartapost.com/news/index',
+        'ARTICLES': '//div[@class="newsWord"]/a[2]/@href',
+        'NEXT_PAGES': '//div[@class="navigation-page"]/a/@href',
+        'TITLE': '//h1[@class="title-large"]/text()',
+        'AUTHOR': '//span[@class="name-post"]/text()',
+        'DATE': '//span[@class="day"]/text()',
+        'TAG': '//div[@class="topicRelated"]/ul/li/a/text()',
+        'CATEGORY': '//a[@class="dt-news"]/text()',
+        'CONTENTS': '//div[@class="col-md-10 col-xs-12 detailNews"]//text()',
+        'STOP_CRITERION': r'Topics :',
+    },
     'USER_AGENT': "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0",
     'ALLOWED_DOMAIN': [
         'www.tribunnews.com',
@@ -235,7 +248,8 @@ CONFIG = {
         'antaranews.com',
         'okezone.com',
         'viva.co.id',
-        'www.pikiran-rakyat.com'
+        'www.pikiran-rakyat.com',
+        'www.thejakartapost.com'
     ]
 }
 

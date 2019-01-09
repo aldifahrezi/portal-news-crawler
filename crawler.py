@@ -27,7 +27,7 @@ class PortalSpider(Spider):
         elif self.portal['NAME'] == 'VIVA':
             self.portal['FORM_DATA']['last_publish_date'] = self.date + " 23:59:59"
             yield FormRequest(self.portal['START'], headers={'User-Agent': CONFIG['USER_AGENT']}, formdata=self.portal['FORM_DATA'])
-        elif self.portal['NAME'] in ["Media Indonesia", "Antara News"]:
+        elif self.portal['NAME'] in ["Media Indonesia", "Antara News", "Jakarta Post"]:
             yield Request(self.portal['START'], headers={'User-Agent': CONFIG['USER_AGENT']})
         elif self.portal['NAME'] == 'Pikiran Rakyat':
             yield Request(self.portal['START'] % 1, self.parse_pikiran_rakyat, headers={'User-Agent': CONFIG['USER_AGENT']})
@@ -42,6 +42,9 @@ class PortalSpider(Spider):
         elif self.portal['NAME'] == 'Berita Satu':
             tmp = date.split("-")
             date = "{}-{}-{}".format(tmp[2], tmp[1], tmp[0])
+        elif self.portal['NAME'] == 'Jakarta Post':
+            locale.setlocale(locale.LC_ALL, 'en_GB.UTF-8')
+            self.stop = False
         self.cnn_attr = {
             'page': 1,
             'articles_size': 0
@@ -71,6 +74,8 @@ class PortalSpider(Spider):
             elif self.portal['NAME'] == "VIVA":
                 if self.filter_by_date(response, 0) == 0:
                     return
+            elif self.portal['NAME'] == "Jakarta Post" and self.stop:
+                return            
 
             yield Request(article, callback=self.parse_article, headers={'User-Agent': CONFIG['USER_AGENT']})
 
@@ -116,7 +121,7 @@ class PortalSpider(Spider):
         elif self.portal['NAME'] == 'Okezone':
             author = self.strip(author)
             author = author[:-1]
-        elif self.portal['NAME'] == 'Pikiran Rakyat':
+        elif self.portal['NAME'] in ['Pikiran Rakyat', "Jakarta Post"]:
             author = self.strip(author)
         elif self.portal['NAME'] == 'Pikiran Rakyat':
             author = response.xpath(self.portal['DATE']).extract()
@@ -202,11 +207,12 @@ class PortalSpider(Spider):
                 continue
 
             content_norm = regex.sub("", content)
-            contents_result = '{} {}'.format(contents_result, content_norm)
-            contents_result = self.strip(contents_result)
-
+            
             if has_stop_criteria and stop_criteria.match(content):
                 break
+            
+            contents_result = '{} {}'.format(contents_result, content_norm)
+            contents_result = self.strip(contents_result)
 
         if contents_result is not None:
             contents_result = contents_result.strip()
@@ -215,6 +221,14 @@ class PortalSpider(Spider):
 
     def parse_article(self, response):
         is_store = True
+
+        if self.portal['NAME'] == "Jakarta Post":
+            if self.filter_by_date(response, 0) == 0:
+                self.stop = True
+                return
+            elif self.filter_by_date(response, 0) == 2:
+                return
+                
         try:
             title = self.parse_title(response)
             date = self.parse_date(response)
@@ -223,8 +237,6 @@ class PortalSpider(Spider):
             category = self.parse_category(response)
             content = self.parse_content(response)
         except Exception as e:
-            print("================================================================")
-            print(e)
             is_store = False
 
         if is_store:
@@ -268,6 +280,10 @@ class PortalSpider(Spider):
         elif self.portal['NAME'] == "Pikiran Rakyat":
             dates = response['published_at'].split(" ")
             art_date = datetime.strptime(dates[0], '%Y-%m-%d')
+        elif self.portal['NAME'] == "Jakarta Post":
+            date = response.xpath(self.portal['DATE']).extract_first()
+            date = date[5:]
+            art_date = datetime.strptime(date, '%B %d, %Y')
 
         filter_date = datetime.strptime(self.date, '%Y-%m-%d')
         if art_date == filter_date:
